@@ -92,12 +92,12 @@ public class UserRepository {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            var queryUser = (User)session.createQuery(
+            var queryUser = (User) session.createQuery(
                     "FROM User as u WHERE u.id = :fId")
                     .setParameter("fId", id)
                     .uniqueResult();
             session.getTransaction().commit();
-            if (queryUser!= null) {
+            if (queryUser != null) {
                 return Optional.of(queryUser);
             }
         } catch (Exception e) {
@@ -136,7 +136,7 @@ public class UserRepository {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            var queryUser = (User)session.createQuery(
+            var queryUser = (User) session.createQuery(
                     "FROM User as u WHERE u.login = :fLogin")
                     .setParameter("fLogin", login)
                     .uniqueResult();
