@@ -14,6 +14,7 @@ public class UserRepository {
 
     /**
      * Сохранить в базе.
+     *
      * @param user пользователь.
      * @return пользователь с id.
      */
@@ -31,6 +32,7 @@ public class UserRepository {
 
     /**
      * Обновить в базе пользователя.
+     *
      * @param user пользователь.
      */
     public void update(User user) {
@@ -38,7 +40,7 @@ public class UserRepository {
         try {
             session.beginTransaction();
             session.createQuery(
-                    "UPDATE User SET login = :fLogin WHERE id = :fId")
+                            "UPDATE User SET login = :fLogin WHERE id = :fId")
                     .setParameter("fLogin", user.getLogin())
                     .setParameter("fId", user.getId())
                     .executeUpdate();
@@ -50,6 +52,7 @@ public class UserRepository {
 
     /**
      * Удалить пользователя по id.
+     *
      * @param userId ID
      */
     public void delete(int userId) {
@@ -57,7 +60,7 @@ public class UserRepository {
         try {
             session.beginTransaction();
             session.createQuery(
-                    "DELETE User WHERE id = :fId")
+                            "DELETE User WHERE id = :fId")
                     .setParameter("fId", userId)
                     .executeUpdate();
             session.getTransaction().commit();
@@ -68,6 +71,7 @@ public class UserRepository {
 
     /**
      * Список пользователей отсортированных по id.
+     *
      * @return список пользователей.
      */
     public List<User> findAllOrderById() {
@@ -86,20 +90,19 @@ public class UserRepository {
 
     /**
      * Найти пользователя по ID
+     *
      * @return пользователь.
      */
     public Optional<User> findById(int id) {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            var queryUser = (User) session.createQuery(
-                    "FROM User as u WHERE u.id = :fId")
-                    .setParameter("fId", id)
-                    .uniqueResult();
+            var queryUser = session.createQuery(
+                    "FROM User as u WHERE u.id = :fId", User.class);
+            queryUser.setParameter("fId", id);
+            var rsl = queryUser.uniqueResultOptional();
             session.getTransaction().commit();
-            if (queryUser != null) {
-                return Optional.of(queryUser);
-            }
+            return rsl;
         } catch (Exception e) {
             session.getTransaction().rollback();
         }
@@ -108,6 +111,7 @@ public class UserRepository {
 
     /**
      * Список пользователей по login LIKE %key%
+     *
      * @param key key
      * @return список пользователей.
      */
@@ -118,7 +122,7 @@ public class UserRepository {
             var query = session.createQuery(
                     "FROM User as u WHERE u.login LIKE :fKey", User.class);
             query.setParameter("fKey", "%" + key + "%");
-           var rsl = query.getResultList();
+            var rsl = query.getResultList();
             session.getTransaction().commit();
             return rsl;
         } catch (Exception e) {
@@ -129,6 +133,7 @@ public class UserRepository {
 
     /**
      * Найти пользователя по login.
+     *
      * @param login login.
      * @return Optional or user.
      */
@@ -136,14 +141,12 @@ public class UserRepository {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
-            var queryUser = (User) session.createQuery(
-                    "FROM User as u WHERE u.login = :fLogin")
-                    .setParameter("fLogin", login)
-                    .uniqueResult();
+            var queryUser = session.createQuery(
+                    "FROM User as u WHERE u.login = :fLogin", User.class);
+            queryUser.setParameter("fLogin", login);
+            var rsl = queryUser.uniqueResultOptional();
             session.getTransaction().commit();
-            if (queryUser != null) {
-                return Optional.of(queryUser);
-            }
+            return rsl;
         } catch (Exception e) {
             session.getTransaction().rollback();
         }
